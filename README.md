@@ -19,6 +19,8 @@ Static Worker app with global bet persistence through Cloudflare Workers KV.
    - Non-production branch deploy command: `npx wrangler versions upload`
    - Path: `/`
 
+   The deploy command must be exactly `npx wrangler deploy` with no period at the end. `npx wrangler deploy.` fails because Wrangler reads `deploy.` as a different command.
+
 4. Deploy.
 
 ## Local Notes

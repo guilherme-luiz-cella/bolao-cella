@@ -14,7 +14,6 @@ loadInitialBets();
 
 function bindPageEvents() {
   document.getElementById('betForm').addEventListener('submit', submitBet);
-  document.getElementById('clearBetsButton').addEventListener('click', clearBets);
 
   document.querySelectorAll('[data-scroll-target]').forEach(button => {
     button.addEventListener('click', () => {
@@ -95,30 +94,6 @@ async function submitBet(event) {
   renderAll();
   showToast('Palpite salvo localmente');
   event.target.reset();
-}
-
-async function clearBets() {
-  const confirmed = window.confirm('Tem certeza que deseja limpar todos os palpites salvos?');
-  if (!confirmed) return;
-
-  if (remoteApiAvailable) {
-    try {
-      const payload = await requestJson(API_BETS_PATH, { method: 'DELETE' });
-      bets = payload.bets;
-      saveLocalBets(bets);
-      renderAll();
-      showToast('Palpites removidos do servidor');
-      return;
-    } catch (error) {
-      console.warn('Não foi possível limpar no servidor. Limpando localmente.', error);
-      remoteApiAvailable = false;
-    }
-  }
-
-  bets = [];
-  saveLocalBets(bets);
-  renderAll();
-  showToast('Palpites removidos localmente');
 }
 
 async function requestJson(url, options = {}) {
