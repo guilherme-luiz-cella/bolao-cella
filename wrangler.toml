@@ -1,4 +1,4 @@
-name = "cella-bolao"
+name = "bolao-cella"
 compatibility_date = "2026-04-29"
 main = "src/worker.js"
 
