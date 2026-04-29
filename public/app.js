@@ -1,5 +1,8 @@
+import { FINAL_SCORE, getClosestResult } from './results.js';
+
 const STORAGE_KEY = 'cella-linguagens-formais-bets-v1';
 const API_BETS_PATH = '/api/bets';
+const VOTING_IS_CLOSED = true;
 const VOTING_END_HOUR = 19;
 const VOTING_END_MINUTE = 30;
 const seedBets = [
@@ -132,7 +135,7 @@ function updateVotingCountdown() {
   const submitButton = document.querySelector('#betForm button[type="submit"]');
   const remainingMs = getVotingEndDate().getTime() - Date.now();
 
-  if (remainingMs <= 0) {
+  if (isVotingClosed()) {
     banner.classList.add('ended');
     timer.textContent = 'encerrada';
     submitButton.disabled = true;
@@ -147,7 +150,7 @@ function updateVotingCountdown() {
 }
 
 function isVotingClosed() {
-  return Date.now() >= getVotingEndDate().getTime();
+  return VOTING_IS_CLOSED || Date.now() >= getVotingEndDate().getTime();
 }
 
 function getVotingEndDate() {
@@ -197,6 +200,7 @@ function renderAll() {
   renderStats();
   renderChart();
   renderForecast();
+  renderFinalResult();
 }
 
 function renderRanking() {
@@ -236,6 +240,32 @@ function renderForecast() {
   document.getElementById('marketScore').textContent = total ? formatScore(average) : '--';
   document.getElementById('totalBets').textContent = `${total} ${total === 1 ? 'palpite' : 'palpites'}`;
   document.getElementById('mostCommonScore').textContent = `Moda: ${mode === null ? '--' : formatScore(mode)}`;
+}
+
+function renderFinalResult() {
+  const result = getClosestResult(bets, FINAL_SCORE);
+
+  document.getElementById('finalScore').textContent = formatScore(result.finalScore);
+  document.getElementById('closestAnnouncement').textContent = getClosestAnnouncement(result);
+}
+
+function getClosestAnnouncement(result) {
+  if (result.closestBets.length === 0) {
+    return 'Ainda não há palpites válidos para comparar com a nota oficial.';
+  }
+
+  const names = formatNames(result.closestBets.map(bet => bet.name));
+  const closestScores = [...new Set(result.closestBets.map(bet => formatScore(bet.score)))].join(' / ');
+  const pointLabel = result.difference === 1 ? 'ponto' : 'pontos';
+
+  return `${names} chegou mais perto: palpite ${closestScores}, diferença de ${formatScore(result.difference)} ${pointLabel}.`;
+}
+
+function formatNames(names) {
+  if (names.length === 1) return names[0];
+  if (names.length === 2) return names.join(' e ');
+
+  return `${names.slice(0, -1).join(', ')} e ${names[names.length - 1]}`;
 }
 
 function renderChart() {

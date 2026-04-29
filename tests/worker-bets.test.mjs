@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { normalizeBet, readBets, seedBets } from '../src/bets.js';
+import { assertBetsOpen, normalizeBet, readBets, seedBets } from '../src/bets.js';
 import worker from '../src/worker.js';
 
 test('reads seed bets when KV is empty', async () => {
@@ -19,7 +19,7 @@ test('GET /api/bets returns bets payload', async () => {
 });
 
 test('POST /api/bets creates, prepends, rounds, and saves a bet', async () => {
-  const env = createEnv();
+  const env = createEnv({ betsClosed: false });
   const response = await worker.fetch(new Request('https://example.com/api/bets', {
     method: 'POST',
     body: JSON.stringify({ name: ' Cella ', score: 8.26, confidence: 'Alta' })
@@ -33,8 +33,21 @@ test('POST /api/bets creates, prepends, rounds, and saves a bet', async () => {
   assert.equal((await env.BETS_KV.get('bets', 'json'))[0].score, 8.3);
 });
 
-test('POST /api/bets rejects invalid payloads', async () => {
+test('POST /api/bets rejects new bets when voting is closed', async () => {
   const env = createEnv();
+  const response = await worker.fetch(new Request('https://example.com/api/bets', {
+    method: 'POST',
+    body: JSON.stringify({ name: 'Cella', score: 7.3, confidence: 'Alta' })
+  }), env);
+  const payload = await response.json();
+
+  assert.equal(response.status, 400);
+  assert.match(payload.error, /votação já foi encerrada/i);
+  assert.equal(await env.BETS_KV.get('bets', 'json'), null);
+});
+
+test('POST /api/bets rejects invalid payloads', async () => {
+  const env = createEnv({ betsClosed: false });
   const response = await worker.fetch(new Request('https://example.com/api/bets', {
     method: 'POST',
     body: JSON.stringify({ name: '', score: 12, confidence: '' })
@@ -70,8 +83,14 @@ test('normalizes valid data and rejects long names', () => {
   assert.throws(() => normalizeBet({ name: 'a'.repeat(41), score: 8, confidence: 'Alta' }), /40 caracteres/);
 });
 
-function createEnv() {
+test('assertBetsOpen allows open voting and rejects closed voting', () => {
+  assert.doesNotThrow(() => assertBetsOpen(false));
+  assert.throws(() => assertBetsOpen(true), /votação já foi encerrada/i);
+});
+
+function createEnv(options = {}) {
   return {
+    BETS_CLOSED: options.betsClosed,
     BETS_KV: createMemoryKv(),
     ASSETS: {
       fetch: async () => new Response('asset response')

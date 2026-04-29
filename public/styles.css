@@ -227,6 +227,45 @@ h1 {
   margin: 0 auto;
 }
 
+.result-card {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.28fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 24px;
+  border-color: rgba(67, 240, 123, 0.62);
+  box-shadow: 0 0 42px rgba(67, 240, 123, 0.1), var(--shadow);
+}
+
+.result-label {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.result-card strong {
+  display: block;
+  color: var(--green);
+  font-size: clamp(56px, 8vw, 92px);
+  line-height: 0.92;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 24px rgba(67, 240, 123, 0.28);
+}
+
+.result-card p {
+  color: #eaf6ff;
+  font-size: clamp(22px, 3vw, 34px);
+  font-weight: 900;
+  line-height: 1.16;
+  overflow-wrap: anywhere;
+}
+
 .profiles {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -662,6 +701,7 @@ footer {
 @media (max-width: 1060px) {
   .hero,
   .profiles,
+  .result-card,
   .bottom {
     grid-template-columns: 1fr;
   }
@@ -726,6 +766,14 @@ footer {
   .profile {
     grid-template-columns: 1fr;
     gap: 14px;
+  }
+
+  .result-card {
+    padding: 20px;
+  }
+
+  .result-card p {
+    font-size: 22px;
   }
 
   .profile img {

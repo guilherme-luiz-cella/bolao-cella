@@ -1,4 +1,4 @@
-import { normalizeBet, readBets, writeBets } from './bets.js';
+import { BETS_CLOSED, assertBetsOpen, normalizeBet, readBets, writeBets } from './bets.js';
 
 export default {
   async fetch(request, env) {
@@ -20,6 +20,8 @@ async function handleBetsRequest(request, env) {
 
   if (request.method === 'POST') {
     try {
+      assertBetsOpen(isBettingClosed(env));
+
       const payload = await request.json();
       const createdBet = normalizeBet(payload);
       const currentBets = await readBets(env.BETS_KV);
@@ -48,4 +50,9 @@ function json(payload, status = 200) {
       'Content-Type': 'application/json; charset=utf-8'
     }
   });
+}
+
+function isBettingClosed(env) {
+  const value = env.BETS_CLOSED ?? BETS_CLOSED;
+  return value !== false && value !== 'false';
 }

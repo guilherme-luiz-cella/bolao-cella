@@ -4,6 +4,14 @@ export const seedBets = [
   { name: 'Professor misterioso', score: 6.9, confidence: 'Insana', createdAt: 'seed-3' }
 ];
 
+export const BETS_CLOSED = true;
+
+export function assertBetsOpen(isClosed = BETS_CLOSED) {
+  if (isClosed) {
+    throw new Error('A votação já foi encerrada.');
+  }
+}
+
 export function normalizeBet(input, createdAt = new Date().toISOString()) {
   const name = String(input?.name || '').trim();
   const score = Number(input?.score);
