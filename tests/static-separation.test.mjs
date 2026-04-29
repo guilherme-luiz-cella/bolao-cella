@@ -8,8 +8,16 @@ const wrangler = readFileSync(new URL('../wrangler.toml', import.meta.url), 'utf
 
 assert.match(html, /<link rel="stylesheet" href="styles\.css" \/>/);
 assert.match(html, /<script type="module" src="app\.js"><\/script>/);
+assert.ok(html.includes('id="countdownBanner"'));
+assert.ok(html.includes('id="countdownTimer"'));
 assert.ok(css.includes('.page'));
+assert.ok(css.includes('.countdown-banner'));
+assert.ok(css.includes('.ranking-name'));
+assert.ok(css.includes('width: max(100%, 680px);'));
 assert.ok(js.includes("const API_BETS_PATH = '/api/bets';"));
+assert.ok(js.includes('class="ranking-name"'));
+assert.ok(js.includes('const VOTING_END_HOUR = 19;'));
+assert.ok(js.includes('const VOTING_END_MINUTE = 30;'));
 assert.ok(wrangler.includes('binding = "BETS_KV"'));
 assert.ok(wrangler.includes('main = "src/worker.js"'));
 assert.ok(wrangler.includes('directory = "public"'));

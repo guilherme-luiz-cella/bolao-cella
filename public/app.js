@@ -1,5 +1,7 @@
 const STORAGE_KEY = 'cella-linguagens-formais-bets-v1';
 const API_BETS_PATH = '/api/bets';
+const VOTING_END_HOUR = 19;
+const VOTING_END_MINUTE = 30;
 const seedBets = [
   { name: 'Mercado', score: 8.2, confidence: 'Média', createdAt: 'seed-1' },
   { name: 'Torcida', score: 9.0, confidence: 'Alta', createdAt: 'seed-2' },
@@ -10,6 +12,7 @@ let bets = loadLocalBets();
 let remoteApiAvailable = false;
 
 bindPageEvents();
+startVotingCountdown();
 loadInitialBets();
 
 function bindPageEvents() {
@@ -55,6 +58,11 @@ function saveLocalBets(nextBets) {
 
 async function submitBet(event) {
   event.preventDefault();
+
+  if (isVotingClosed()) {
+    showToast('A votação já foi encerrada.');
+    return;
+  }
 
   let nextBet;
 
@@ -113,6 +121,52 @@ function showToast(message) {
   toast.textContent = message;
 }
 
+function startVotingCountdown() {
+  updateVotingCountdown();
+  setInterval(updateVotingCountdown, 1000);
+}
+
+function updateVotingCountdown() {
+  const banner = document.getElementById('countdownBanner');
+  const timer = document.getElementById('countdownTimer');
+  const submitButton = document.querySelector('#betForm button[type="submit"]');
+  const remainingMs = getVotingEndDate().getTime() - Date.now();
+
+  if (remainingMs <= 0) {
+    banner.classList.add('ended');
+    timer.textContent = 'encerrada';
+    submitButton.disabled = true;
+    submitButton.textContent = 'Votação encerrada';
+    return;
+  }
+
+  banner.classList.remove('ended');
+  timer.textContent = formatCountdown(remainingMs);
+  submitButton.disabled = false;
+  submitButton.textContent = 'Registrar palpite';
+}
+
+function isVotingClosed() {
+  return Date.now() >= getVotingEndDate().getTime();
+}
+
+function getVotingEndDate() {
+  const endDate = new Date();
+  endDate.setHours(VOTING_END_HOUR, VOTING_END_MINUTE, 0, 0);
+  return endDate;
+}
+
+function formatCountdown(milliseconds) {
+  const totalSeconds = Math.max(0, Math.floor(milliseconds / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return [hours, minutes, seconds]
+    .map(value => String(value).padStart(2, '0'))
+    .join(':');
+}
+
 function normalizeBet(input) {
   const name = String(input.name || '').trim();
   const score = Number(input.score);
@@ -159,7 +213,7 @@ function renderRanking() {
     return `
       <li>
         <span class="medal">${medal}</span>
-        <span>${escapeHtml(bet.name)} <small class="ranking-confidence">(${escapeHtml(bet.confidence)})</small></span>
+        <span class="ranking-name">${escapeHtml(bet.name)} <small class="ranking-confidence">(${escapeHtml(bet.confidence)})</small></span>
         <strong>${formatScore(bet.score)}</strong>
       </li>
     `;
