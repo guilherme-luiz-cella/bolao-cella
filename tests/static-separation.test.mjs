@@ -16,6 +16,7 @@ assert.ok(css.includes('.ranking-name'));
 assert.ok(css.includes('width: max(100%, 680px);'));
 assert.ok(js.includes("const API_BETS_PATH = '/api/bets';"));
 assert.ok(js.includes('class="ranking-name"'));
+assert.doesNotMatch(js, /sorted\.slice\(0,\s*8\)/);
 assert.ok(js.includes('const VOTING_END_HOUR = 19;'));
 assert.ok(js.includes('const VOTING_END_MINUTE = 30;'));
 assert.ok(wrangler.includes('binding = "BETS_KV"'));

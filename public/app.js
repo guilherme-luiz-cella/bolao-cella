@@ -207,7 +207,7 @@ function renderRanking() {
   }
 
   const sorted = sortBetsByScore(bets);
-  ranking.innerHTML = sorted.slice(0, 8).map((bet, index) => {
+  ranking.innerHTML = sorted.map((bet, index) => {
     const medals = ['🥇', '🥈', '🥉'];
     const medal = medals[index] || '🎲';
     return `
