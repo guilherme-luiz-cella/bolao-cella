@@ -11,6 +11,8 @@ assert.match(html, /<script type="module" src="app\.js"><\/script>/);
 assert.ok(css.includes('.page'));
 assert.ok(js.includes("const API_BETS_PATH = '/api/bets';"));
 assert.ok(wrangler.includes('binding = "BETS_KV"'));
+assert.ok(wrangler.includes('main = "src/worker.js"'));
+assert.ok(wrangler.includes('directory = "public"'));
 
 assert.doesNotMatch(html, /<style[\s>]/i);
 assert.doesNotMatch(html, /<script>(.|\n)*<\/script>/i);

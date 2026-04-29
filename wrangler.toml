@@ -1,6 +1,11 @@
 name = "cella-bolao"
 compatibility_date = "2026-04-29"
-pages_build_output_dir = "public"
+main = "src/worker.js"
+
+[assets]
+directory = "public"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
 
 [[kv_namespaces]]
 binding = "BETS_KV"

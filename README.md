@@ -1,6 +1,6 @@
 # Bolão da Nota
 
-Static Cloudflare Pages app with global bet persistence through Cloudflare Pages Functions and KV.
+Static Worker app with global bet persistence through Cloudflare Workers KV.
 
 ## Deploy
 
@@ -12,19 +12,15 @@ Static Cloudflare Pages app with global bet persistence through Cloudflare Pages
 
 2. Copy the generated namespace ID into `wrangler.toml`, replacing `REPLACE_WITH_KV_NAMESPACE_ID`.
 
-3. Configure Cloudflare Pages:
+3. Configure Workers Builds:
 
-   - Build command: empty
-   - Build output directory: `public`
+   - Build command: `exit 0`
+   - Deploy command: `npx wrangler deploy`
+   - Non-production branch deploy command: `npx wrangler versions upload`
+   - Path: `/`
 
-4. Deploy with Pages:
-
-   ```bash
-   npx wrangler pages deploy public --project-name cella-bolao
-   ```
-
-   Do not use plain `npx wrangler deploy` for this project. Plain `wrangler deploy` is for Worker entry-point deployments and can fail with `Missing entry-point to Worker script or to assets directory`.
+4. Deploy.
 
 ## Local Notes
 
-When the `/api/bets` function is unavailable locally, the frontend falls back to `localStorage` so the page still works.
+The Worker serves static files from `public/` and handles `/api/bets` before static assets. When the API is unavailable locally, the frontend falls back to `localStorage` so the page still works.
