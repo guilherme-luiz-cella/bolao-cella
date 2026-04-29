@@ -17,7 +17,13 @@ Static Cloudflare Pages app with global bet persistence through Cloudflare Pages
    - Build command: empty
    - Build output directory: `public`
 
-4. Deploy.
+4. Deploy with Pages:
+
+   ```bash
+   npx wrangler pages deploy public --project-name cella-bolao
+   ```
+
+   Do not use plain `npx wrangler deploy` for this project. Plain `wrangler deploy` is for Worker entry-point deployments and can fail with `Missing entry-point to Worker script or to assets directory`.
 
 ## Local Notes
 
