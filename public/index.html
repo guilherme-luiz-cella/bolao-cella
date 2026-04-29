@@ -4,489 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bolão da Nota — Linguagens Formais</title>
-  <style>
-    :root {
-      --bg: #020817;
-      --bg-2: #071327;
-      --card: rgba(15, 27, 50, 0.82);
-      --card-2: rgba(9, 19, 38, 0.9);
-      --text: #f8fafc;
-      --muted: #a8b3c7;
-      --cyan: #23d9ff;
-      --cyan-soft: rgba(35, 217, 255, 0.18);
-      --green: #43f07b;
-      --yellow: #ffd84d;
-      --purple: #c964ff;
-      --orange: #fb923c;
-      --border: rgba(148, 163, 184, 0.26);
-      --shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      min-height: 100vh;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 18% 12%, rgba(35, 217, 255, 0.18), transparent 27%),
-        radial-gradient(circle at 78% 30%, rgba(37, 99, 235, 0.15), transparent 32%),
-        radial-gradient(circle at 55% 100%, rgba(67, 240, 123, 0.08), transparent 26%),
-        linear-gradient(180deg, #030712 0%, var(--bg) 42%, #01040d 100%);
-      overflow-x: hidden;
-    }
-
-    body::before,
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    body::before {
-      background-image:
-        radial-gradient(rgba(96, 165, 250, 0.55) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(35, 217, 255, 0.08) 1px, transparent 1px),
-        linear-gradient(rgba(35, 217, 255, 0.06) 1px, transparent 1px);
-      background-size: 54px 54px, 120px 120px, 120px 120px;
-      mask-image: radial-gradient(circle at 50% 18%, black, transparent 68%);
-      opacity: 0.36;
-    }
-
-    body::after {
-      background:
-        linear-gradient(135deg, transparent 0 9%, rgba(35, 217, 255, 0.12) 9.2%, transparent 9.4% 100%),
-        linear-gradient(225deg, transparent 0 8%, rgba(35, 217, 255, 0.1) 8.2%, transparent 8.4% 100%);
-      opacity: 0.42;
-    }
-
-    .page {
-      width: min(1280px, calc(100% - 40px));
-      margin: 0 auto;
-      padding: 36px 0 28px;
-    }
-
-    .hero {
-      display: grid;
-      grid-template-columns: 1.28fr 0.72fr;
-      gap: 42px;
-      align-items: center;
-      margin-bottom: 24px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 18px;
-      border: 1px solid rgba(147, 197, 253, 0.75);
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.82);
-      box-shadow: inset 0 0 22px rgba(35, 217, 255, 0.12), 0 0 34px rgba(59, 130, 246, 0.16);
-      color: #eaf6ff;
-      font-weight: 900;
-      font-size: 18px;
-      margin-bottom: 26px;
-    }
-
-    h1 {
-      max-width: 720px;
-      font-size: clamp(46px, 7vw, 80px);
-      line-height: 0.94;
-      letter-spacing: -0.065em;
-      margin-bottom: 22px;
-      text-wrap: balance;
-    }
-
-    .accent {
-      color: var(--cyan);
-      text-shadow: 0 0 26px rgba(35, 217, 255, 0.28);
-    }
-
-    .subtitle {
-      max-width: 710px;
-      color: var(--muted);
-      font-size: clamp(18px, 2vw, 24px);
-      line-height: 1.45;
-    }
-
-    .subtitle strong {
-      color: var(--cyan);
-    }
-
-    .glass {
-      background: linear-gradient(180deg, rgba(19, 35, 64, 0.88), rgba(8, 18, 38, 0.84));
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-      backdrop-filter: blur(18px);
-    }
-
-    .forecast {
-      min-height: 260px;
-      display: grid;
-      place-items: center;
-      text-align: center;
-      border-color: rgba(35, 217, 255, 0.82);
-      box-shadow: 0 0 48px rgba(35, 217, 255, 0.12), inset 0 0 44px rgba(35, 217, 255, 0.08);
-      position: relative;
-      overflow: hidden;
-      padding: 26px;
-    }
-
-    .forecast::after {
-      content: "";
-      position: absolute;
-      right: 34px;
-      bottom: 34px;
-      width: 46px;
-      height: 44px;
-      background:
-        linear-gradient(to top, rgba(35, 217, 255, 0.18) 62%, transparent 62%),
-        linear-gradient(to top, rgba(35, 217, 255, 0.26) 78%, transparent 78%),
-        linear-gradient(to top, rgba(35, 217, 255, 0.15) 100%, transparent 100%);
-      background-size: 8px 100%, 8px 100%, 8px 100%;
-      background-position: 0 100%, 18px 100%, 36px 100%;
-      background-repeat: no-repeat;
-      border-radius: 8px;
-    }
-
-    .forecast small {
-      font-size: 21px;
-      font-weight: 800;
-      color: #e2e8f0;
-    }
-
-    .forecast strong {
-      display: block;
-      font-size: clamp(96px, 15vw, 142px);
-      line-height: 0.92;
-      letter-spacing: -0.08em;
-      color: #36f7ff;
-      text-shadow: 0 0 30px rgba(54, 247, 255, 0.55);
-      margin: 12px 0 8px;
-    }
-
-    .sparkline {
-      width: min(340px, 90%);
-      height: 54px;
-      margin: 0 auto;
-    }
-
-    .profiles {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-
-    .profile {
-      display: grid;
-      grid-template-columns: 46% 1fr;
-      gap: 20px;
-      padding: 14px;
-      align-items: center;
-      min-height: 268px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .profile::after {
-      content: "✦";
-      position: absolute;
-      top: 16px;
-      right: 18px;
-      color: var(--green);
-      font-size: 28px;
-      filter: drop-shadow(0 0 12px currentColor);
-    }
-
-    .profile.professor::after {
-      color: var(--yellow);
-    }
-
-    .profile img {
-      width: 100%;
-      height: 238px;
-      object-fit: cover;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: #111827;
-    }
-
-    .profile h2 {
-      font-size: clamp(22px, 3vw, 30px);
-      letter-spacing: -0.04em;
-      margin-bottom: 12px;
-    }
-
-    .role {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      border-radius: 9px;
-      border: 1px solid rgba(67, 240, 123, 0.45);
-      background: rgba(67, 240, 123, 0.14);
-      color: var(--green);
-      font-weight: 900;
-      font-size: 18px;
-      margin-bottom: 16px;
-    }
-
-    .professor .role {
-      border-color: rgba(255, 216, 77, 0.45);
-      background: rgba(255, 216, 77, 0.14);
-      color: var(--yellow);
-    }
-
-    .profile p {
-      color: var(--muted);
-      line-height: 1.45;
-      font-size: 19px;
-    }
-
-    .odds {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-bottom: 16px;
-    }
-
-    .odd {
-      min-height: 104px;
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      padding: 18px 24px;
-    }
-
-    .icon {
-      display: grid;
-      place-items: center;
-      width: 58px;
-      height: 58px;
-      border-radius: 15px;
-      font-size: 34px;
-      font-weight: 900;
-      flex: 0 0 auto;
-    }
-
-    .odd strong {
-      display: block;
-      font-size: 39px;
-      letter-spacing: -0.04em;
-      line-height: 1;
-    }
-
-    .odd span {
-      color: #dbe3f0;
-      font-size: 18px;
-    }
-
-    .odd.green strong, .odd.green .icon { color: var(--green); }
-    .odd.cyan strong, .odd.cyan .icon { color: var(--cyan); }
-    .odd.purple strong, .odd.purple .icon { color: var(--purple); }
-    .odd.yellow strong, .odd.yellow .icon { color: var(--yellow); }
-
-    .odd.green .icon { border: 2px solid rgba(67,240,123,.55); background: rgba(67,240,123,.08); }
-    .odd.cyan .icon { border: 2px solid rgba(35,217,255,.55); background: rgba(35,217,255,.08); }
-    .odd.purple .icon { border: 2px solid rgba(201,100,255,.55); background: rgba(201,100,255,.08); font-size: 26px; }
-    .odd.yellow .icon { border: 2px solid rgba(255,216,77,.55); background: rgba(255,216,77,.08); }
-
-    .bottom {
-      display: grid;
-      grid-template-columns: 1.08fr 0.92fr;
-      gap: 16px;
-      margin-bottom: 18px;
-    }
-
-    .form-card,
-    .ranking-card {
-      padding: 24px;
-    }
-
-    .form-card {
-      border-color: rgba(67, 240, 123, 0.48);
-      box-shadow: 0 0 42px rgba(67, 240, 123, 0.08), var(--shadow);
-    }
-
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      font-size: 29px;
-      letter-spacing: -0.04em;
-      margin-bottom: 20px;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 0.85fr 0.85fr;
-      gap: 16px;
-      align-items: end;
-    }
-
-    label {
-      display: block;
-      color: #d9e2ee;
-      font-size: 16px;
-      margin-bottom: 8px;
-    }
-
-    input,
-    select {
-      width: 100%;
-      height: 48px;
-      border: 1px solid rgba(148, 163, 184, 0.36);
-      border-radius: 10px;
-      background: rgba(15, 27, 50, 0.9);
-      color: var(--text);
-      padding: 0 14px;
-      outline: none;
-      font-size: 16px;
-    }
-
-    input:focus,
-    select:focus {
-      border-color: var(--cyan);
-      box-shadow: 0 0 0 4px rgba(35, 217, 255, 0.1);
-    }
-
-    button {
-      width: 100%;
-      border: 0;
-      border-radius: 12px;
-      height: 54px;
-      margin-top: 18px;
-      background: linear-gradient(90deg, var(--green), var(--cyan));
-      color: #03101b;
-      font-size: 18px;
-      font-weight: 950;
-      cursor: pointer;
-      transition: transform 0.18s ease, filter 0.18s ease;
-    }
-
-    button:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.07);
-    }
-
-    .toast {
-      display: none;
-      margin-top: 14px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: 1px solid rgba(67, 240, 123, 0.42);
-      background: rgba(67, 240, 123, 0.12);
-      color: #bbf7d0;
-      line-height: 1.45;
-    }
-
-    .ranking-card {
-      border-color: rgba(35, 217, 255, 0.46);
-      box-shadow: 0 0 42px rgba(35, 217, 255, 0.08), var(--shadow);
-    }
-
-    .ranking {
-      list-style: none;
-      border: 1px solid rgba(148, 163, 184, 0.18);
-      border-radius: 14px;
-      overflow: hidden;
-    }
-
-    .ranking li {
-      display: grid;
-      grid-template-columns: 52px 1fr auto;
-      align-items: center;
-      gap: 12px;
-      padding: 11px 16px;
-      background: rgba(8, 18, 38, 0.52);
-      border-bottom: 1px solid rgba(148, 163, 184, 0.16);
-      font-size: 18px;
-      font-weight: 800;
-    }
-
-    .ranking li:last-child {
-      border-bottom: 0;
-    }
-
-    .medal {
-      display: grid;
-      place-items: center;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.08);
-      font-size: 21px;
-    }
-
-    .ranking strong {
-      color: var(--cyan);
-      font-size: 22px;
-    }
-
-    footer {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 18px;
-      padding: 8px 0;
-    }
-
-    @media (max-width: 1060px) {
-      .hero,
-      .profiles,
-      .bottom {
-        grid-template-columns: 1fr;
-      }
-
-      .forecast {
-        min-height: 220px;
-      }
-
-      .odds {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 720px) {
-      .page {
-        width: min(100% - 24px, 1280px);
-        padding-top: 20px;
-      }
-
-      .profile {
-        grid-template-columns: 1fr;
-      }
-
-      .profile img {
-        height: 310px;
-      }
-
-      .odds,
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .badge {
-        font-size: 15px;
-      }
-
-      footer {
-        text-align: center;
-        font-size: 15px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <main class="page">
@@ -495,8 +13,12 @@
         <div class="badge">🎓 Linguagens Formais • Bolão</div>
         <h1>Quanto o Cella vai tirar na <span class="accent">prova?</span></h1>
         <p class="subtitle">
-          Um bolão acadêmico e divertido para prever a nota da prova de <strong>Linguagens Formais</strong>. Participe, chute e boa sorte!
+          Um bolão acadêmico e divertido para prever a nota da prova de <strong>Linguagens Formais</strong>. Os palpites ficam salvos no app.
         </p>
+        <div class="hero-actions">
+          <button class="mini-button" type="button" data-scroll-target="betForm">Fazer palpite</button>
+          <button class="mini-button secondary" type="button" data-scroll-target="chartSection">Ver gráfico</button>
+        </div>
       </div>
 
       <aside class="glass forecast" aria-label="Previsão do mercado acadêmico">
@@ -507,13 +29,18 @@
             <path d="M7 54 C32 42, 42 55, 66 38 S111 47, 132 35 S173 47, 198 36 S246 33, 286 10" stroke="#23d9ff" stroke-width="5" stroke-linecap="round" />
             <circle cx="286" cy="10" r="7" fill="#23d9ff" />
           </svg>
+          <div class="forecast-meta">
+            <span id="totalBets">0 palpites</span>
+            <span>•</span>
+            <span id="mostCommonScore">Moda: --</span>
+          </div>
         </div>
       </aside>
     </section>
 
     <section class="profiles">
       <article class="glass profile">
-        <img src="guilherme.jpg" alt="Foto de Guilherme Luiz Cella" onerror="this.src='/mnt/data/image.png'; this.onerror=null;" />
+        <img src="guilherme.jpg" alt="Foto de Guilherme Luiz Cella" />
         <div>
           <h2>Guilherme Luiz Cella</h2>
           <div class="role">🎓 Aluno</div>
@@ -524,7 +51,7 @@
       </article>
 
       <article class="glass profile professor">
-        <img src="fabio-zanin.jpg" alt="Foto do professor Fabio Zanin" onerror="this.src='/mnt/data/images.jpeg'; this.onerror=null;" />
+        <img src="fabio-zanin.jpg" alt="Foto do professor Fabio Zanin" />
         <div>
           <h2>Professor Fabio Zanin</h2>
           <div class="role">🎓 Professor</div>
@@ -555,16 +82,16 @@
     </section>
 
     <section class="bottom">
-      <form class="glass form-card" onsubmit="submitBet(event)">
+      <form class="glass form-card" id="betForm">
         <h2 class="section-title"><span>🎯</span> Faça seu palpite</h2>
         <div class="form-grid">
           <div>
             <label for="name">Seu nome</label>
-            <input id="name" type="text" placeholder="Digite seu nome" required />
+            <input id="name" type="text" placeholder="Digite seu nome" autocomplete="name" required />
           </div>
           <div>
             <label for="score">Nota prevista</label>
-            <input id="score" type="number" min="0" max="10" step="0.1" placeholder="Ex.: 8,2" required />
+            <input id="score" type="number" min="0" max="10" step="0.1" placeholder="Ex.: 8,2" inputmode="decimal" required />
           </div>
           <div>
             <label for="confidence">Confiança no palpite</label>
@@ -578,55 +105,33 @@
           </div>
         </div>
         <button type="submit">Registrar palpite</button>
+        <button class="danger-button" type="button" id="clearBetsButton">Limpar palpites salvos</button>
         <div class="toast" id="toast"></div>
       </form>
 
       <aside class="glass ranking-card">
         <h2 class="section-title"><span class="accent">▮▮▮</span> Ranking dos palpites</h2>
-        <ol class="ranking" id="ranking">
-          <li><span class="medal">🥇</span><span>Mercado</span><strong>8,2</strong></li>
-          <li><span class="medal">🥈</span><span>Torcida</span><strong>9,0</strong></li>
-          <li><span class="medal">🥉</span><span>Professor misterioso</span><strong>6,9</strong></li>
-        </ol>
+        <ol class="ranking" id="ranking"></ol>
       </aside>
+    </section>
+
+    <section class="glass chart-card" id="chartSection">
+      <h2 class="section-title"><span>📊</span> Gráfico dos palpites</h2>
+      <div class="stats-grid">
+        <div class="stat"><span>Total</span><strong id="statTotal">0</strong></div>
+        <div class="stat"><span>Média</span><strong id="statAverage">--</strong></div>
+        <div class="stat"><span>Maior</span><strong id="statMax">--</strong></div>
+        <div class="stat"><span>Menor</span><strong id="statMin">--</strong></div>
+      </div>
+      <div class="chart-wrap" id="chartWrap"></div>
     </section>
 
     <footer>
       <span>☺</span>
-      <span>Página feita por diversão. Sem apostas reais.</span>
+      <span>Página feita por diversão. Sem apostas reais. Dados salvos no app.</span>
     </footer>
   </main>
 
-  <script>
-    function submitBet(event) {
-      event.preventDefault();
-
-      const name = document.getElementById('name').value.trim();
-      const score = Number(document.getElementById('score').value).toLocaleString('pt-BR', {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 1
-      });
-      const confidence = document.getElementById('confidence').value;
-      const ranking = document.getElementById('ranking');
-      const toast = document.getElementById('toast');
-
-      const item = document.createElement('li');
-      item.innerHTML = `<span class="medal">🎲</span><span>${escapeHtml(name)} <small style="color:#a8b3c7">(${escapeHtml(confidence)})</small></span><strong>${score}</strong>`;
-      ranking.prepend(item);
-
-      toast.style.display = 'block';
-      toast.textContent = `Palpite registrado: ${name} acredita que o Cella tira ${score}.`;
-      event.target.reset();
-    }
-
-    function escapeHtml(value) {
-      return String(value)
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
-    }
-  </script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>

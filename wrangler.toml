@@ -1,0 +1,6 @@
+name = "cella-bolao"
+compatibility_date = "2026-04-29"
+
+[[kv_namespaces]]
+binding = "BETS_KV"
+id = "1e9bc46d441a4915bc3a1703aa43f896"
